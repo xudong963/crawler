@@ -12,7 +12,7 @@ def get_page(offset):
         'app_name': 'web_search',
         'offset': offset,
         'format': 'json',
-        'keyword': '%E8%A1%97%E6%8B%8D',
+        'keyword': '街拍',
         'autoload': 'true',
         'count': '20',
         'en_qc': '1',
@@ -59,15 +59,20 @@ def save_image(item):
 
 
 def main(offset):
+    
     json = get_page(offset)
     for item in get_images(json):
         print(item)
         save_image(item)
 
+
+from multiprocessing.pool import Pool
+
 GROUP_START = 1
 GROUP_END = 20
 
 if __name__ == '__main__':
-    groups = ([x * 20 for x in range(GROUP_START, GROUP_END + 1)])
+    groups = ([x*20 for x in range(GROUP_START, GROUP_END+1)])
     for i in groups:
         main(i)
+    
