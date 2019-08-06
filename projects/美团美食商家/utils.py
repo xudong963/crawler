@@ -4,6 +4,7 @@ import json
 import base64
 import random
 import requests
+import re
 from pyquery import PyQuery
 
 
@@ -100,13 +101,14 @@ def getToken(brfilepath, city_code, uuid, page, cityname):
 def parsePage(data_page):
 	# data_parse = dict()
 	infos = data_page.get('data')
-	print(infos)
 	if infos is None:
 		return None
 	else:
 		infos = infos.get('poiInfos')
-		
 		for info in infos:
+			poiId = info.get('poiId')
+			# phone = getPhone(poiId)
+			# print(phone)
 			# 店名: 地址, 评论数量, 平均得分, 平均价格, 电话
 			# data_parse[info.get('title')] = [info.get('address'), info.get('allCommentNum'), info.get('avgScore'), info.get('avgPrice'), info.get('phone')]
 			yield{
@@ -115,5 +117,18 @@ def parsePage(data_page):
 				'评论数量': info.get('allCommentNum'),
 				'平均得分': info.get('avgScore'),
 				'平均价格': info.get('avgPrice'),
-				'电话': info.get('phone')
+				# '电话': phone
 			}
+
+
+def getPhone(poiId):
+	url = "https://www.meituan.com/meishi/"+ str(poiId);
+	header = {
+		'User-Agent': getRandomUA('useragents.data')
+	}
+	request = requests.get(url, headers = header)
+	print(request)
+	item = re.findall(r'"phone":(.*?),',str(request.text))
+	print(item)
+	return item
+
